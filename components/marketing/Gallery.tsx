@@ -5,8 +5,11 @@ import { motion } from 'framer-motion';
 
 /**
  * Galerie de la page d'accueil (sous le hero). Grille responsive avec zoom au
- * survol. Images de démonstration (Unsplash) — remplace `GALLERY` par les
- * visuels réels d'alnadjah. Suit la peau active via les variables --skin-*.
+ * survol. Suit la peau active via les variables --skin-*.
+ *
+ * Images : déposez vos fichiers dans `public/gallery/` (ex: 01.jpg … 06.jpg),
+ * puis ajustez ce tableau (src, alt, wide). Les chemins commencent par
+ * `/gallery/` (servis depuis public/). Voir public/gallery/README.md.
  */
 interface GalleryItem {
   src: string;
@@ -16,12 +19,12 @@ interface GalleryItem {
 }
 
 const GALLERY: GalleryItem[] = [
-  { src: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=1200&q=80', alt: 'Entrepôt logistique', wide: true },
-  { src: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800&q=80', alt: 'Colis prêts à l\'expédition' },
-  { src: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=800&q=80', alt: 'Chargement camion' },
-  { src: 'https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?w=800&q=80', alt: 'Conteneurs de fret' },
-  { src: 'https://images.unsplash.com/photo-1618761714954-0b8cd0026356?w=1200&q=80', alt: 'Livraison à domicile', wide: true },
-  { src: 'https://images.unsplash.com/photo-1494412574643-ff11b0a5c1c3?w=800&q=80', alt: 'Suivi de colis' },
+  { src: '/gallery/01.jpg', alt: 'Entrepôt logistique', wide: true },
+  { src: '/gallery/02.jpg', alt: 'Colis prêts à l\'expédition' },
+  { src: '/gallery/03.jpg', alt: 'Chargement camion' },
+  { src: '/gallery/04.jpg', alt: 'Conteneurs de fret' },
+  { src: '/gallery/05.jpg', alt: 'Livraison à domicile', wide: true },
+  { src: '/gallery/06.jpg', alt: 'Suivi de colis' },
 ];
 
 export function Gallery() {
