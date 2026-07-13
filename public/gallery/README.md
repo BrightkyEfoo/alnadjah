@@ -1,17 +1,22 @@
 # Images de la galerie
 
-Déposez ici les images de la galerie de la page d'accueil (section sous le hero).
+Images de la galerie de la page d'accueil (section sous le hero).
 
 ## Convention
 
-- Nommez les fichiers `01.jpg`, `02.jpg`, … `06.jpg` (ou `.png`/`.webp`).
-- Ils sont servis à `/gallery/01.jpg`, etc. (dossier `public/`).
-- Le tableau `GALLERY` dans `components/marketing/Gallery.tsx` référence ces
-  chemins. Ajoutez/retirez des entrées ou changez `alt` / `wide` (2 colonnes)
-  selon vos visuels.
+- Fichiers nommés `01.jpg`, `02.jpg`, … `NN.jpg` (séquentiel, sans trou).
+- Servis à `/gallery/01.jpg`, etc. (dossier `public/`).
+- Le composant `components/marketing/Gallery.tsx` génère la liste à partir de
+  `GALLERY_COUNT` (nombre d'images). Un item sur 6 est affiché en large.
 
-## Conseils
+## Ajouter / retirer des images
 
-- Format paysage recommandé (~1600×900 pour les `wide`, ~1200×900 sinon).
-- Compressez (WebP ou JPEG qualité ~80) — ces images sont servies telles quelles.
-- Pas de fichier = image cassée à l'affichage (pas d'erreur de build).
+1. Dépose le fichier en respectant la numérotation (`23.jpg`, `24.jpg`, …).
+2. Mets à jour `GALLERY_COUNT` dans `Gallery.tsx`.
+
+## Notes
+
+- Les images sont servies telles quelles (`unoptimized`) — pas d'optimiseur Next,
+  donc aucun 400. Compresse-les avant (WebP/JPEG ~80, ~1600px de large max) pour
+  garder la page légère.
+- Format paysage recommandé.

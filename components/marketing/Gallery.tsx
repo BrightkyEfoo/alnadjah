@@ -18,14 +18,18 @@ interface GalleryItem {
   wide?: boolean;
 }
 
-const GALLERY: GalleryItem[] = [
-  { src: '/gallery/01.jpg', alt: 'Entrepôt logistique', wide: true },
-  { src: '/gallery/02.jpg', alt: 'Colis prêts à l\'expédition' },
-  { src: '/gallery/03.jpg', alt: 'Chargement camion' },
-  { src: '/gallery/04.jpg', alt: 'Conteneurs de fret' },
-  { src: '/gallery/05.jpg', alt: 'Livraison à domicile', wide: true },
-  { src: '/gallery/06.jpg', alt: 'Suivi de colis' },
-];
+// Images dans public/gallery/ nommées 01.jpg … NN.jpg. Pour en ajouter/retirer :
+// dépose le fichier + ajuste GALLERY_COUNT. Un item sur 6 est affiché en large.
+const GALLERY_COUNT = 22;
+
+const GALLERY: GalleryItem[] = Array.from({ length: GALLERY_COUNT }, (_, i) => {
+  const n = String(i + 1).padStart(2, '0');
+  return {
+    src: `/gallery/${n}.jpg`,
+    alt: `alnadjah — photo ${i + 1}`,
+    wide: i % 6 === 0,
+  };
+});
 
 export function Gallery() {
   return (
@@ -73,6 +77,7 @@ export function Gallery() {
                   src={item.src}
                   alt={item.alt}
                   fill
+                  unoptimized
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
