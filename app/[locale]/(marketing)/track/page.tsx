@@ -3,11 +3,9 @@
 import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Search, Package, MapPin, Clock, AlertCircle, Loader2, Building2 } from 'lucide-react';
-import axios from 'axios';
+import { apiClient } from '@/lib/api/client';
 import { useI18n } from '@/i18n';
 import { trackCopy } from '@/i18n/messages/pages/track';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
 
 /** Teinte du statut : or / émeraude / encre / rouge — pas de palette SaaS. */
 const STATUS_TONE: Record<string, string> = {
@@ -89,8 +87,9 @@ function TrackPageInner() {
     setLoading(true);
     setError(null);
     setParcel(null);
-    axios
-      .get(`${API_URL}/public/tracking/${encodeURIComponent(submitted.trim())}`)
+    // apiClient : base de l'API résolue depuis le host courant (cf. baseUrl.ts).
+    apiClient
+      .get(`/public/tracking/${encodeURIComponent(submitted.trim())}`)
       .then((r) => setParcel(r.data?.data ?? null))
       .catch((e) => {
         if (e.response?.status === 404) {

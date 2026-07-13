@@ -2,11 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { CheckCircle2, AlertCircle, Loader2, MessageCircle } from 'lucide-react';
-import axios from 'axios';
+import { apiClient } from '@/lib/api/client';
 import { useLocale } from '@/i18n';
 import { statusCopy } from '@/i18n/messages/pages/status';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
 const WHATSAPP_HREF = 'https://wa.me/23568888048';
 
 type Health = 'ok' | 'down' | 'checking';
@@ -27,7 +26,8 @@ export default function StatusPage() {
       // On sonde l'endpoint /health public : les trois services publics
       // dépendent tous de cette API, on ne les distingue pas encore.
       try {
-        await axios.get(`${API_URL}/health`, { timeout: 5000 });
+        // apiClient : base résolue depuis le host courant (cf. baseUrl.ts).
+        await apiClient.get('/health', { timeout: 5000 });
         setHealth('ok');
       } catch {
         setHealth('down');

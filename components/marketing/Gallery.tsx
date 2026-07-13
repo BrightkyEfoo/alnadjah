@@ -17,7 +17,7 @@ import { useI18n } from '@/i18n';
  * sont miroir et le sens de progression suit le RTL.
  */
 const IMAGE_COUNT = 22;
-const AUTOPLAY_MS = 6000;
+const AUTOPLAY_MS = 3200;
 
 const SOURCES = Array.from(
   { length: IMAGE_COUNT },
@@ -116,7 +116,7 @@ export function Gallery() {
                   initial={{ opacity: 0, x: enterFrom }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -enterFrom }}
-                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
                   drag="x"
                   dragConstraints={{ left: 0, right: 0 }}
                   dragElastic={0.15}
@@ -216,7 +216,7 @@ export function Gallery() {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -8 }}
-                    transition={{ duration: 0.3 }}
+                    transition={{ duration: 0.22 }}
                     aria-live="polite"
                   >
                     <h3

@@ -12,11 +12,9 @@ import {
   ArrowLeft,
   ExternalLink,
 } from 'lucide-react';
-import axios from 'axios';
+import { apiClient } from '@/lib/api/client';
 import { LocaleLink, useLocale } from '@/i18n';
 import { agenciesCopy } from '@/i18n/messages/pages/agencies';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
 
 // Ordre d'affichage : lundi -> dimanche. Les index suivent Date.getDay() (0 = dimanche).
 const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
@@ -47,8 +45,9 @@ export default function AgencyDetailPage({ params }: { params: Promise<{ id: str
   useEffect(() => {
     setLoading(true);
     setError(null);
-    axios
-      .get(`${API_URL}/public/agencies/${encodeURIComponent(id)}`)
+    // apiClient : base de l'API résolue depuis le host courant (cf. baseUrl.ts).
+    apiClient
+      .get(`/public/agencies/${encodeURIComponent(id)}`)
       .then((r) => setAgency(r.data?.data ?? null))
       .catch((e) => {
         if (e.response?.status === 404) setError(c.detail.notFound);

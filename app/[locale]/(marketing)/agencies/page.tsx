@@ -11,11 +11,9 @@ import {
   Building2,
   ArrowRight,
 } from 'lucide-react';
-import axios from 'axios';
+import { apiClient } from '@/lib/api/client';
 import { LocaleLink, useLocale } from '@/i18n';
 import { agenciesCopy } from '@/i18n/messages/pages/agencies';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
 
 type Agency = {
   id: string;
@@ -40,8 +38,11 @@ export default function AgenciesPage() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    axios
-      .get(`${API_URL}/public/agencies`)
+    // apiClient (et pas axios brut) : son intercepteur résout la base de l'API
+    // à l'exécution depuis le host courant (api.<domaine>), sinon le site tape
+    // le NEXT_PUBLIC_API_URL figé au build — donc localhost en production.
+    apiClient
+      .get('/public/agencies')
       .then((r) => setAgencies(r.data?.data ?? []))
       .catch((e) => setError(e.response?.data?.message || c.error))
       .finally(() => setLoading(false));
