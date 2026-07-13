@@ -16,38 +16,61 @@
   --color-primary-900: var(--color-primary-900);
 }
 
-/* --- Skin runtime tokens (overridden by SkinProvider) --- */
+/* --- Skin runtime tokens (valeurs de la peau "Andalus" ; le SkinProvider les
+   ré-applique côté client, ces valeurs servent au premier rendu serveur). --- */
 :root {
-  --color-primary-50: #E8F5E9;
-  --color-primary-100: #C8E6C9;
-  --color-primary-200: #A5D6A7;
-  --color-primary-300: #81C784;
-  --color-primary-400: #66BB6A;
-  --color-primary-500: #4CAF50;
-  --color-primary-600: #43A047;
-  --color-primary-700: #388E3C;
-  --color-primary-800: #2E7D32;
-  --color-primary-900: #1B5E20;
+  --color-primary-50: #E6F2EE;
+  --color-primary-100: #C2DFD6;
+  --color-primary-200: #9BCBBC;
+  --color-primary-300: #71B6A1;
+  --color-primary-400: #4FA48C;
+  --color-primary-500: #2E9276;
+  --color-primary-600: #157A60;
+  --color-primary-700: #0B5D4E;
+  --color-primary-800: #08483C;
+  --color-primary-900: #06392F;
 
-  --skin-primary: #1B5E20;
-  --skin-secondary: #4CAF50;
-  --skin-accent: #A5D6A7;
-  --skin-surface: #FFFFFF;
-  --skin-background: #F4F8F2;
-  --skin-foreground: #0B1A0D;
-  --skin-muted: #5A6B5C;
-  --skin-border: #DCE5DA;
-  --skin-hero-1: #1B5E20;
-  --skin-hero-2: #388E3C;
-  --skin-hero-3: #A5D6A7;
-  --skin-font-body: 'Geist', system-ui, sans-serif;
-  --skin-font-heading: 'Geist', system-ui, sans-serif;
-  --skin-radius: 0.75rem;
-  --skin-radius-sm: 0.45rem;
-  --skin-radius-lg: 1.05rem;
-  --skin-radius-xl: 1.35rem;
-  --skin-shadow: 0 10px 30px -12px rgba(0,0,0,0.18), 0 4px 12px -4px rgba(0,0,0,0.08);
-  --skin-glow: rgba(27,94,32,0.4);
+  --skin-primary: #0B5D4E;
+  --skin-secondary: #0F7A63;
+  --skin-accent: #C8A24A;
+  --skin-surface: #FFFCF5;
+  --skin-background: #F7F1E4;
+  --skin-foreground: #14211C;
+  --skin-muted: #6E6552;
+  --skin-border: #E4D9BE;
+  --skin-hero-1: #06392F;
+  --skin-hero-2: #0B5D4E;
+  --skin-hero-3: #C8A24A;
+  --skin-font-body: var(--font-body-latin), system-ui, sans-serif;
+  --skin-font-heading: var(--font-display-latin), Georgia, serif;
+  --skin-radius: 0.5rem;
+  --skin-radius-sm: 0.3rem;
+  --skin-radius-lg: 0.7rem;
+  --skin-radius-xl: 0.9rem;
+  --skin-shadow: 0 10px 30px -12px rgba(20,33,28,0.18), 0 4px 12px -4px rgba(20,33,28,0.08);
+  --skin-glow: rgba(11,93,78,0.35);
+
+  /* Or : couleur d'ornement, distincte de l'accent applicatif. */
+  --gold: #C8A24A;
+  --gold-soft: color-mix(in oklab, var(--gold) 35%, transparent);
+  --ink: #14211C;
+}
+
+/* --- Arabe : bascule des polices et ajustements typographiques en RTL --- */
+[dir='rtl'] {
+  --skin-font-body: var(--font-body-arabic), 'Segoe UI', sans-serif;
+  --skin-font-heading: var(--font-display-arabic), 'Times New Roman', serif;
+}
+/* L'arabe a une hauteur d'x plus grande : on relâche l'interligne et on coupe
+   les majuscules/letter-spacing latins qui n'ont aucun sens en arabe. */
+[dir='rtl'] body {
+  line-height: 1.85;
+}
+[dir='rtl'] .uppercase {
+  text-transform: none;
+}
+[dir='rtl'] [class*='tracking-'] {
+  letter-spacing: 0 !important;
 }
 
 body {
@@ -190,4 +213,158 @@ body {
   gap: 3rem;
   animation: marquee-x 32s linear infinite;
   width: max-content;
+}
+
+/* ==========================================================================
+   ANDALUS — vocabulaire visuel arabo-islamique
+   Motifs géométriques (girih, zellige, moucharabieh), arcs outrepassés,
+   filets d'or. Tout est en SVG inline (data URI) : aucun asset à charger,
+   la couleur suit la peau.
+   ========================================================================== */
+
+/* Girih : trame d'étoiles à huit branches (carré + carré pivoté à 45°).
+   Le motif fondateur de l'ornement islamique. */
+.pattern-girih {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cg fill='none' stroke='%23C8A24A' stroke-width='1'%3E%3Cpath d='M32 0 L64 32 L32 64 L0 32 Z'/%3E%3Cpath d='M9.4 9.4 H54.6 V54.6 H9.4 Z'/%3E%3Cpath d='M0 0 L9.4 9.4 M64 0 L54.6 9.4 M0 64 L9.4 54.6 M64 64 L54.6 54.6'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 64px 64px;
+}
+
+/* Zellige : entrelacs losangé plus dense, pour les bandeaux et les fonds sombres. */
+.pattern-zellige {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23C8A24A' stroke-width='1'%3E%3Cpath d='M20 0 L40 20 L20 40 L0 20 Z'/%3E%3Cpath d='M0 0 L40 40 M40 0 L0 40'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 40px 40px;
+}
+
+/* Moucharabieh : claustra ajouré, en superposition très discrète. */
+.pattern-mashrabiya {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%23C8A24A' stroke-width='1.2'%3E%3Ccircle cx='24' cy='24' r='11'/%3E%3Ccircle cx='0' cy='0' r='11'/%3E%3Ccircle cx='48' cy='0' r='11'/%3E%3Ccircle cx='0' cy='48' r='11'/%3E%3Ccircle cx='48' cy='48' r='11'/%3E%3C/g%3E%3C/svg%3E");
+  background-size: 48px 48px;
+}
+
+/* Arc brisé (ogive) : masque appliqué aux images et aux cartes. Le sommet est
+   pointu, les flancs verticaux — la silhouette d'un mihrab. */
+.arch {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140' preserveAspectRatio='none'%3E%3Cpath d='M0 140 L0 66 Q0 14 50 0 Q100 14 100 66 L100 140 Z' fill='black'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140' preserveAspectRatio='none'%3E%3Cpath d='M0 140 L0 66 Q0 14 50 0 Q100 14 100 66 L100 140 Z' fill='black'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Arc outrepassé (fer à cheval), silhouette andalouse : la courbe redescend
+   sous son diamètre avant de rejoindre les piédroits. */
+.arch-horseshoe {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140' preserveAspectRatio='none'%3E%3Cpath d='M0 140 L0 74 Q0 66 6 62 Q0 30 50 12 Q100 30 94 62 Q100 66 100 74 L100 140 Z' fill='black'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 140' preserveAspectRatio='none'%3E%3Cpath d='M0 140 L0 74 Q0 66 6 62 Q0 30 50 12 Q100 30 94 62 Q100 66 100 74 L100 140 Z' fill='black'/%3E%3C/svg%3E");
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+}
+
+/* Filet d'or : séparateur horizontal avec losange central. */
+.rule-gold {
+  position: relative;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--gold-soft) 15%,
+    var(--gold) 50%,
+    var(--gold-soft) 85%,
+    transparent
+  );
+}
+.rule-gold::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  transform: translate(-50%, -50%) rotate(45deg);
+  background: var(--gold);
+}
+
+/* Cartouche : encadré à double filet, comme une inscription épigraphique. */
+.cartouche {
+  position: relative;
+  background: var(--skin-surface);
+  border: 1px solid var(--gold-soft);
+  border-radius: var(--skin-radius);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--gold) 12%, transparent);
+}
+
+/* Carte : coins nets, filet d'or froid, papier ivoire. Remplace le look SaaS. */
+.skin-card {
+  background: var(--skin-surface);
+  border: 1px solid var(--skin-border);
+  border-radius: var(--skin-radius);
+  box-shadow: 0 1px 0 color-mix(in oklab, var(--gold) 18%, transparent),
+    0 18px 40px -28px rgba(20, 33, 28, 0.45);
+}
+
+/* Bouton primaire : émeraude pleine, liseré d'or au survol. */
+.skin-btn-primary {
+  background: var(--skin-primary);
+  color: #fff;
+  border-radius: var(--skin-radius);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--gold) 45%, transparent);
+  transition: background 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+.skin-btn-primary:hover {
+  filter: none;
+  background: color-mix(in oklab, var(--skin-primary) 88%, black);
+  box-shadow: inset 0 0 0 1px var(--gold), 0 10px 24px -14px var(--skin-glow);
+  transform: none;
+}
+
+/* Bouton d'or : réservé aux appels à l'action forts sur fond sombre. */
+.btn-gold {
+  background: var(--gold);
+  color: #14211c;
+  border-radius: var(--skin-radius);
+  font-weight: 600;
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+  cursor: pointer;
+}
+.btn-gold:hover {
+  background: color-mix(in oklab, var(--gold) 85%, white);
+  box-shadow: 0 10px 26px -14px var(--gold);
+}
+
+/* Surtitre : petite capitale espacée, encadrée de deux losanges. */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--skin-primary);
+}
+.eyebrow::before,
+.eyebrow::after {
+  content: '';
+  width: 5px;
+  height: 5px;
+  transform: rotate(45deg);
+  background: var(--gold);
+}
+
+/* Icônes directionnelles (flèches, chevrons) : miroir automatique en arabe. */
+[dir='rtl'] .flip-rtl {
+  transform: scaleX(-1);
+}
+
+/* Filigrane de motif : à poser en position absolute sur une section. */
+.motif-veil {
+  opacity: 0.06;
+  pointer-events: none;
+}
+.motif-veil-strong {
+  opacity: 0.14;
+  pointer-events: none;
 }

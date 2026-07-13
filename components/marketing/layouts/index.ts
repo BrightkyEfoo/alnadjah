@@ -4,6 +4,7 @@ import { BoldLayout } from './BoldLayout';
 import { MagazineLayout } from './MagazineLayout';
 import { EditorialLayout } from './EditorialLayout';
 import { MinimalLayout } from './MinimalLayout';
+import { AndalusLayout } from './AndalusLayout';
 
 /**
  * Registry layoutVariant -> composant home. Le skin choisit son layout via
@@ -19,6 +20,7 @@ export const HOME_LAYOUTS: Record<LayoutVariant, React.ComponentType> = {
   magazine: MagazineLayout,
   editorial: EditorialLayout,
   minimal: MinimalLayout,
+  andalus: AndalusLayout,
 };
 
-export const DEFAULT_HOME_LAYOUT: React.ComponentType = ClassicLayout;
+export const DEFAULT_HOME_LAYOUT: React.ComponentType = AndalusLayout;

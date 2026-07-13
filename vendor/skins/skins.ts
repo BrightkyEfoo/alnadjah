@@ -182,6 +182,45 @@ export const BUILTIN_SKINS: Record<string, SkinTokens> = {
       ],
     },
   },
+  /**
+   * Andalus — direction artistique arabo-islamique d'Al-Nadjah Express.
+   * Vert émeraude profond (l'islam, le voyage, le tampon de l'entreprise), or
+   * (calligraphie, ornement), sable et ivoire (le désert, le papier). Fonts
+   * pilotées par globals.css : Cormorant/Amiri en titres, Manrope/IBM Plex
+   * Sans Arabic en courant, avec bascule automatique en RTL.
+   */
+  andalus: {
+    id: 'andalus',
+    name: 'Andalus',
+    tagline: 'Arabo-islamique — arcs, girih, or et émeraude',
+    primary: '#0B5D4E',
+    secondary: '#0F7A63',
+    accent: '#C8A24A',
+    surface: '#FFFCF5',
+    background: '#F7F1E4',
+    foreground: '#14211C',
+    muted: '#6E6552',
+    border: '#E4D9BE',
+    heroGradient: ['#06392F', '#0B5D4E', '#C8A24A'],
+    fontBody: 'var(--font-body-latin), system-ui, sans-serif',
+    fontHeading: 'var(--font-display-latin), Georgia, serif',
+    radius: 0.5,
+    shadowFlavor: 'soft',
+    mood: 'warm',
+    layoutVariant: 'andalus',
+    images: {
+      preview: '/gallery/22.jpg',
+      hero: '/gallery/15.jpg',
+      authShell: '/gallery/11.jpg',
+      journey: [
+        '/gallery/18.jpg',
+        '/gallery/16.jpg',
+        '/gallery/17.jpg',
+        '/gallery/02.jpg',
+        '/gallery/05.jpg',
+      ],
+    },
+  },
 };
 
-export const DEFAULT_SKIN_ID = 'forest';
+export const DEFAULT_SKIN_ID = 'andalus';

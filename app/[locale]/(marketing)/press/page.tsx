@@ -1,46 +1,151 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
+import { Mail, MessageCircle } from 'lucide-react';
 import { MarketingContentPage } from '@/components/marketing/MarketingContentPage';
+import type { Locale } from '@/i18n/config';
+import { pressCopy } from '@/i18n/messages/pages/press';
 
-export const metadata: Metadata = {
-  title: 'Presse | Transit Soft Services',
-  description: 'Espace presse de Transit Soft Services.',
-};
+const WHATSAPP_HREF = 'https://wa.me/23568888048';
+const EMAIL = 'contact@alnadjah-express.com';
 
-export default function PressPage() {
+// `params` est typé `string` (contrat Next), puis restreint à `Locale` :
+// la locale layout a déjà rejeté toute valeur inconnue via notFound().
+type Params = { params: Promise<{ locale: string }> };
+
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { locale } = await params;
+  const c = pressCopy[locale as Locale];
+  return { title: c.meta.title, description: c.meta.description };
+}
+
+export default async function PressPage({ params }: Params) {
+  const { locale } = await params;
+  const c = pressCopy[locale as Locale];
+
   return (
-    <MarketingContentPage
-      eyebrow="Presse"
-      title="Espace presse."
-      intro="Vous etes journaliste, bloggeur ou createur de contenu ? Voici nos ressources."
-    >
-      <h2>Contact presse</h2>
-      <p>
-        Pour toute demande d&apos;interview, de chiffres ou de visuels :{' '}
-        <Link
-          href="mailto:press@transitsoftservices.com"
-          className="font-semibold underline"
-          style={{ color: 'var(--skin-primary)' }}
+    <MarketingContentPage eyebrow={c.eyebrow} title={c.title} intro={c.intro} wide>
+      <section className="grid gap-6 md:grid-cols-2">
+        <div className="relative overflow-hidden p-8 skin-card">
+          <div
+            aria-hidden
+            className="absolute -top-10 end-[-2rem] h-40 w-32 arch pattern-girih motif-veil-strong"
+            style={{ background: 'var(--skin-primary)' }}
+          />
+          <div className="relative">
+            <h2
+              className="text-2xl font-light tracking-tight skin-font-heading"
+              style={{ color: 'var(--skin-foreground)' }}
+            >
+              {c.contactTitle}
+            </h2>
+            <div className="my-6 rule-gold" />
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--skin-muted)' }}>
+              {c.contactBody}
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a
+                href={`mailto:${EMAIL}`}
+                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold skin-btn-primary"
+              >
+                <Mail className="h-4 w-4" aria-hidden />
+                {c.contactCta}
+              </a>
+              <a
+                href={WHATSAPP_HREF}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold transition-colors"
+                style={{
+                  color: 'var(--skin-foreground)',
+                  border: '1px solid var(--skin-border)',
+                  borderRadius: 'var(--skin-radius)',
+                }}
+              >
+                <MessageCircle className="h-4 w-4" aria-hidden />
+                {c.contactWhatsapp}
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-8 cartouche">
+          <h2
+            className="text-2xl font-light tracking-tight skin-font-heading"
+            style={{ color: 'var(--skin-foreground)' }}
+          >
+            {c.kitTitle}
+          </h2>
+          <div className="my-6 rule-gold" />
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--skin-muted)' }}>
+            {c.kitBody}
+          </p>
+        </div>
+      </section>
+
+      <section className="mt-24">
+        <h2
+          className="text-3xl font-light tracking-tight skin-font-heading sm:text-4xl"
+          style={{ color: 'var(--skin-foreground)' }}
         >
-          press@transitsoftservices.com
-        </Link>
-        . Reponse sous 48 heures ouvrees.
-      </p>
+          {c.factsTitle}
+        </h2>
+        <div className="mt-8 max-w-[16rem] rule-gold" />
 
-      <h2>Kit de marque</h2>
-      <p>
-        Logos, palettes et captures haute resolution disponibles sur demande
-        par email. Merci de mentionner le contexte d&apos;utilisation prevu.
-      </p>
+        <ul className="mt-10 grid gap-4 sm:grid-cols-2">
+          {c.facts.map((fact) => (
+            <li key={fact} className="flex gap-4 p-6 cartouche">
+              <span
+                aria-hidden
+                className="mt-2 h-2 w-2 shrink-0 rotate-45"
+                style={{ background: 'var(--gold)' }}
+              />
+              <span className="text-sm leading-relaxed" style={{ color: 'var(--skin-muted)' }}>
+                {fact}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
 
-      <h2>Faits cles</h2>
-      <ul>
-        <li>Fondee en 2025 a Yaounde, Cameroun.</li>
-        <li>Plateforme SaaS multi-tenant pour transitaires d&apos;Afrique
-          de l&apos;Ouest et Centrale.</li>
-        <li>Conforme aux normes OHADA pour la comptabilite.</li>
-        <li>Disponible en français, support en cours pour anglais.</li>
-      </ul>
+      <section className="mt-24">
+        <h2
+          className="text-3xl font-light tracking-tight skin-font-heading sm:text-4xl"
+          style={{ color: 'var(--skin-foreground)' }}
+        >
+          {c.releasesTitle}
+        </h2>
+        <div className="mt-8 max-w-[16rem] rule-gold" />
+
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          {c.releases.map((release) => (
+            <article key={release.title} className="relative overflow-hidden p-7 skin-card">
+              {/* Chaque communiqué est une porte ouverte sur une ligne. */}
+              <div
+                aria-hidden
+                className="absolute -top-10 end-[-2rem] h-40 w-32 arch pattern-girih motif-veil-strong"
+                style={{ background: 'var(--skin-primary)' }}
+              />
+              <div className="relative">
+                <p
+                  className="text-xs font-semibold uppercase tracking-[0.16em]"
+                  style={{ color: 'var(--gold)' }}
+                >
+                  {release.date}
+                </p>
+                <h3
+                  className="mt-4 text-lg font-semibold skin-font-heading"
+                  style={{ color: 'var(--skin-foreground)' }}
+                >
+                  {release.title}
+                </h3>
+                <div className="my-6 rule-gold" />
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--skin-muted)' }}>
+                  {release.body}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
     </MarketingContentPage>
   );
 }

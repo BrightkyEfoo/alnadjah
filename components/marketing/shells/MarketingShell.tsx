@@ -14,6 +14,8 @@ import { FooterBoldDark } from '@/components/marketing/footers/FooterBoldDark';
 import { FooterMagazineMasthead } from '@/components/marketing/footers/FooterMagazineMasthead';
 import { FooterEditorialColophon } from '@/components/marketing/footers/FooterEditorialColophon';
 import { FooterMinimalLine } from '@/components/marketing/footers/FooterMinimalLine';
+import { NavAndalus } from '@/components/marketing/navs/NavAndalus';
+import { FooterAndalus } from '@/components/marketing/footers/FooterAndalus';
 
 /**
  * Shell marketing par skin/layoutVariant. Couvre Nav + Footer + container
@@ -93,6 +95,15 @@ const SHELLS: Record<LayoutVariant, ShellPieces> = {
   minimal: {
     Nav: NavMinimalCenter,
     Footer: FooterMinimalLine,
+    mainTopPadding: 'pt-0',
+    mainLeftPadding: '',
+  },
+  // andalus : nav ivoire sticky (déjà dans le flux, aucun padding à compenser)
+  // + pied de page émeraude. Le fond du site reste le papier sable ; les
+  // sections posent elles-mêmes leurs motifs.
+  andalus: {
+    Nav: NavAndalus,
+    Footer: FooterAndalus,
     mainTopPadding: 'pt-0',
     mainLeftPadding: '',
   },

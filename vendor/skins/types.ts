@@ -28,7 +28,14 @@ export type SkinMood = 'natural' | 'corporate' | 'warm' | 'dark' | 'minimal' | s
  * un nouveau layout, etendre l'union ici + creer le composant cote web-client
  * + l'enregistrer dans HOME_LAYOUTS.
  */
-export type LayoutVariant = 'classic' | 'bold' | 'magazine' | 'minimal' | 'editorial';
+export type LayoutVariant =
+  | 'classic'
+  | 'bold'
+  | 'magazine'
+  | 'minimal'
+  | 'editorial'
+  /** andalus : direction artistique arabo-islamique (arcs, girih, or/emeraude). */
+  | 'andalus';
 
 /**
  * Image slots used by the web-client. Each skin can override any subset.

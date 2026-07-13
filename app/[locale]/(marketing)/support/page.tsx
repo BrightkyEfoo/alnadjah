@@ -1,111 +1,189 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
-import { Mail, MessageCircle, Phone } from 'lucide-react';
-import { MarketingContentPage } from '@/components/marketing/MarketingContentPage';
+import { ArrowRight, Mail, MessageCircle, Phone } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { LocaleLink } from '@/i18n';
+import type { Locale } from '@/i18n/config';
+import { supportCopy } from '@/i18n/messages/pages/support';
 
-export const metadata: Metadata = {
-  title: 'Support | Transit Soft Services',
-  description: 'Comment nous contacter pour toute question.',
+const WHATSAPP_HREF = 'https://wa.me/23568888048';
+
+/**
+ * Icône et lien de chaque canal. La clé vient de la copie (`channels[].key`),
+ * qui reste identique dans les trois langues.
+ */
+const CHANNEL_META: Record<string, { icon: LucideIcon; href: string; external?: boolean }> = {
+  whatsapp: { icon: MessageCircle, href: WHATSAPP_HREF, external: true },
+  phone: { icon: Phone, href: 'tel:+237688395608' },
+  email: { icon: Mail, href: 'mailto:contact@alnadjah-express.com' },
 };
 
-const CHANNELS = [
-  {
-    icon: Mail,
-    title: 'Email',
-    desc: 'Reponse sous 24h en jours ouvres.',
-    cta: 'support@transitsoftservices.com',
-    href: 'mailto:support@transitsoftservices.com',
-  },
-  {
-    icon: MessageCircle,
-    title: 'WhatsApp',
-    desc: 'Le plus rapide pour les questions courtes.',
-    cta: 'Ouvrir WhatsApp',
-    href: 'https://wa.me/237600000000',
-  },
-  {
-    icon: Phone,
-    title: 'Telephone',
-    desc: 'Du lundi au vendredi, 8h-18h (GMT+1).',
-    cta: '+237 6XX XXX XXX',
-    href: 'tel:+237600000000',
-  },
-];
+// `params` est typé `string` (contrat Next), puis restreint à `Locale` :
+// la locale layout a déjà rejeté toute valeur inconnue via notFound().
+type Params = { params: Promise<{ locale: string }> };
 
-export default function SupportPage() {
+export async function generateMetadata({ params }: Params): Promise<Metadata> {
+  const { locale } = await params;
+  const c = supportCopy[locale as Locale];
+  return { title: c.meta.title, description: c.meta.description };
+}
+
+export default async function SupportPage({ params }: Params) {
+  const { locale } = await params;
+  const c = supportCopy[locale as Locale];
+
   return (
-    <MarketingContentPage
-      eyebrow="Support"
-      title="On est la pour vous aider."
-      intro="Que vous soyez client final ou agence partenaire, choisissez le canal qui vous arrange."
-    >
-      <div className="not-prose mt-8 grid gap-4 sm:grid-cols-3">
-        {CHANNELS.map((c) => {
-          const Icon = c.icon;
-          return (
-            <Link
-              key={c.title}
-              href={c.href}
-              target={c.href.startsWith('http') ? '_blank' : undefined}
-              className="block rounded-2xl border p-6 transition-colors hover:bg-black/[.02]"
-              style={{ borderColor: 'var(--skin-border)' }}
-            >
-              <div
-                className="flex h-10 w-10 items-center justify-center rounded-xl"
-                style={{ background: 'var(--skin-primary)', opacity: 0.15 }}
+    <div className="pb-24">
+      <header
+        className="relative overflow-hidden py-20 sm:py-28"
+        style={{ background: 'var(--skin-hero-1)' }}
+      >
+        <div aria-hidden className="absolute inset-0 pattern-girih motif-veil" />
+        <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <span className="eyebrow" style={{ color: 'var(--gold)' }}>
+            {c.eyebrow}
+          </span>
+          <h1
+            className="mt-5 text-4xl font-light tracking-tight skin-font-heading sm:text-5xl"
+            style={{ color: '#FFFCF5' }}
+          >
+            {c.title}
+          </h1>
+          <div className="mx-auto mt-7 max-w-[16rem] rule-gold" />
+          <p
+            className="mx-auto mt-7 max-w-2xl text-base leading-relaxed"
+            style={{ color: 'color-mix(in oklab, #FFFCF5 76%, transparent)' }}
+          >
+            {c.intro}
+          </p>
+        </div>
+      </header>
+
+      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="grid gap-6 md:grid-cols-3">
+          {c.channels.map((channel) => {
+            const meta = CHANNEL_META[channel.key];
+            if (!meta) return null;
+            const Icon = meta.icon;
+            return (
+              <a
+                key={channel.key}
+                href={meta.href}
+                target={meta.external ? '_blank' : undefined}
+                rel={meta.external ? 'noopener noreferrer' : undefined}
+                className="group relative overflow-hidden p-7 skin-card transition-shadow hover:shadow-md"
               >
-                <Icon className="h-5 w-5" style={{ color: 'var(--skin-primary)' }} />
-              </div>
-              <h3
-                className="mt-4 text-base font-bold"
+                <div
+                  aria-hidden
+                  className="absolute -top-10 end-[-2rem] h-40 w-32 arch pattern-girih motif-veil-strong"
+                  style={{ background: 'var(--skin-primary)' }}
+                />
+                <div className="relative">
+                  <Icon className="h-5 w-5" style={{ color: 'var(--gold)' }} aria-hidden />
+                  <h2
+                    className="mt-5 text-lg font-semibold skin-font-heading"
+                    style={{ color: 'var(--skin-foreground)' }}
+                  >
+                    {channel.title}
+                  </h2>
+                  <p className="mt-2 text-sm" style={{ color: 'var(--skin-muted)' }}>
+                    {channel.desc}
+                  </p>
+                  <div className="my-5 rule-gold" />
+                  <p
+                    className="text-sm font-semibold transition-opacity group-hover:opacity-80"
+                    dir="ltr"
+                    style={{ color: 'var(--skin-primary)', textAlign: 'start' }}
+                  >
+                    {channel.value}
+                  </p>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-4xl px-4 pb-20 sm:px-6 lg:px-8">
+        <span className="eyebrow">{c.faq.eyebrow}</span>
+        <h2
+          className="mt-4 text-3xl font-light tracking-tight skin-font-heading sm:text-4xl"
+          style={{ color: 'var(--skin-foreground)' }}
+        >
+          {c.faq.title}
+        </h2>
+        <div className="mt-8 max-w-[16rem] rule-gold" />
+
+        <dl className="mt-12 space-y-8">
+          {c.faq.items.map((item) => (
+            <div key={item.q} className="p-7 cartouche">
+              <dt
+                className="text-lg font-semibold skin-font-heading"
                 style={{ color: 'var(--skin-foreground)' }}
               >
-                {c.title}
-              </h3>
-              <p
-                className="mt-1 text-xs"
+                {item.q}
+              </dt>
+              <dd
+                className="mt-4 text-sm leading-relaxed"
                 style={{ color: 'var(--skin-muted)' }}
               >
-                {c.desc}
-              </p>
-              <p
-                className="mt-3 text-sm font-semibold"
-                style={{ color: 'var(--skin-primary)' }}
-              >
-                {c.cta}
-              </p>
-            </Link>
-          );
-        })}
-      </div>
+                {item.a}
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
 
-      <h2>Questions frequentes</h2>
-      <h3>Je n&apos;arrive pas a creer un compte</h3>
-      <p>
-        Verifiez que votre numero de telephone commence bien par
-        l&apos;indicatif pays (+237 par exemple) et que votre mot de passe
-        fait au moins 6 caracteres. Si vous obtenez "numero deja associe",
-        utilisez la page connexion.
-      </p>
-      <h3>Mon colis n&apos;apparait pas au tracking</h3>
-      <p>
-        Verifiez le numero de tracking exact tel qu&apos;indique sur votre
-        recu. Les colis tres recents peuvent prendre quelques minutes a
-        apparaitre apres enregistrement par l&apos;agence.
-      </p>
-      <h3>Je veux supprimer mon compte</h3>
-      <p>
-        Envoyez-nous un email a{' '}
-        <Link
-          href="mailto:privacy@transitsoftservices.com"
-          className="font-semibold underline"
-          style={{ color: 'var(--skin-primary)' }}
+      <section className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div
+          className="relative overflow-hidden px-6 py-16 text-center sm:px-16"
+          style={{
+            background: 'var(--skin-hero-1)',
+            borderRadius: 'var(--skin-radius)',
+            boxShadow: 'inset 0 0 0 1px var(--gold-soft)',
+          }}
         >
-          privacy@transitsoftservices.com
-        </Link>{' '}
-        depuis l&apos;email associe a votre compte. Suppression effective sous
-        7 jours (les donnees comptables liees sont conservees selon la loi).
-      </p>
-    </MarketingContentPage>
+          <div aria-hidden className="absolute inset-0 pattern-girih motif-veil-strong" />
+          <div className="relative mx-auto max-w-2xl">
+            <h2
+              className="text-3xl font-light skin-font-heading sm:text-4xl"
+              style={{ color: '#FFFCF5' }}
+            >
+              {c.cta.title}
+            </h2>
+            <div className="mx-auto mt-7 max-w-[16rem] rule-gold" />
+            <p
+              className="mt-7 text-base leading-relaxed"
+              style={{ color: 'color-mix(in oklab, #FFFCF5 76%, transparent)' }}
+            >
+              {c.cta.body}
+            </p>
+
+            <div className="mt-10 flex flex-wrap justify-center gap-3">
+              <a
+                href={WHATSAPP_HREF}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold btn-gold"
+              >
+                <MessageCircle className="h-4 w-4" aria-hidden />
+                {c.cta.primary}
+              </a>
+              <LocaleLink
+                href="/simulateur"
+                className="inline-flex items-center gap-2 px-7 py-3.5 text-sm font-semibold transition-colors"
+                style={{
+                  color: '#FFFCF5',
+                  border: '1px solid color-mix(in oklab, var(--gold) 55%, transparent)',
+                  borderRadius: 'var(--skin-radius)',
+                }}
+              >
+                {c.cta.secondary}
+                <ArrowRight className="h-4 w-4 flip-rtl" aria-hidden />
+              </LocaleLink>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

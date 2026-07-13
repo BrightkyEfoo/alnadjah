@@ -1,125 +1,250 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
+import { CheckCircle2, AlertCircle, Loader2, MessageCircle } from 'lucide-react';
 import axios from 'axios';
+import { useLocale } from '@/i18n';
+import { statusCopy } from '@/i18n/messages/pages/status';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api/v1';
+const WHATSAPP_HREF = 'https://wa.me/23568888048';
 
 type Health = 'ok' | 'down' | 'checking';
 
-interface Component {
-  key: string;
-  label: string;
-  desc: string;
-  status: Health;
-}
+/** Clés des services sondés — les libellés vivent dans la copie i18n. */
+const SERVICE_KEYS = ['tracking', 'simulator', 'portal'] as const;
+type ServiceKey = (typeof SERVICE_KEYS)[number];
 
 export default function StatusPage() {
-  const [components, setComponents] = useState<Component[]>([
-    { key: 'api', label: 'API publique', desc: 'Endpoint de tracking et auth.', status: 'checking' },
-    { key: 'portal', label: 'Portail client', desc: 'Espace personnel et notifications.', status: 'checking' },
-    { key: 'staff', label: 'Plateforme agence', desc: 'Outils interne des transitaires.', status: 'checking' },
-  ]);
+  const locale = useLocale();
+  const c = statusCopy[locale];
+
+  const [health, setHealth] = useState<Health>('checking');
   const [checkedAt, setCheckedAt] = useState<Date | null>(null);
 
   useEffect(() => {
     const ping = async () => {
-      // On ping l'endpoint /health public. Si OK, on considere tous les
-      // services up (decoupage fin a faire si on expose un /status/components).
+      // On sonde l'endpoint /health public : les trois services publics
+      // dépendent tous de cette API, on ne les distingue pas encore.
       try {
         await axios.get(`${API_URL}/health`, { timeout: 5000 });
-        setComponents((cs) => cs.map((c) => ({ ...c, status: 'ok' as const })));
+        setHealth('ok');
       } catch {
-        setComponents((cs) => cs.map((c) => ({ ...c, status: 'down' as const })));
+        setHealth('down');
       }
       setCheckedAt(new Date());
     };
     ping();
-    const id = setInterval(ping, 60_000); // refresh chaque minute
+    const id = setInterval(ping, 60_000); // vérification chaque minute
     return () => clearInterval(id);
   }, []);
 
-  const allOk = components.every((c) => c.status === 'ok');
-  const anyChecking = components.some((c) => c.status === 'checking');
+  const title =
+    health === 'checking' ? c.titleChecking : health === 'ok' ? c.titleOk : c.titleDown;
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
-      <header className="mb-8 text-center">
-        <p
-          className="text-xs font-bold uppercase tracking-[0.2em]"
-          style={{ color: 'var(--skin-primary)' }}
-        >
-          Statut
-        </p>
-        <h1
-          className="mt-3 text-4xl font-bold tracking-tight skin-font-heading"
-          style={{ color: 'var(--skin-foreground)' }}
-        >
-          {anyChecking
-            ? 'Verification en cours...'
-            : allOk
-              ? 'Tous les services sont operationnels'
-              : 'Incident en cours'}
-        </h1>
-        {checkedAt && (
-          <p className="mt-2 text-xs" style={{ color: 'var(--skin-muted)' }}>
-            Derniere verification : {checkedAt.toLocaleTimeString('fr-FR')}
-          </p>
-        )}
+    <div className="pb-24">
+      <header
+        className="relative overflow-hidden py-20 sm:py-28"
+        style={{ background: 'var(--skin-hero-1)' }}
+      >
+        <div aria-hidden className="absolute inset-0 pattern-girih motif-veil" />
+        <div className="relative mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <span className="eyebrow" style={{ color: 'var(--gold)' }}>
+            {c.eyebrow}
+          </span>
+          <h1
+            className="mt-5 text-4xl font-light tracking-tight skin-font-heading sm:text-5xl"
+            style={{ color: '#FFFCF5' }}
+          >
+            {title}
+          </h1>
+          <div className="mx-auto mt-7 max-w-[16rem] rule-gold" />
+          {health !== 'checking' && (
+            <p
+              className="mx-auto mt-7 max-w-2xl text-base leading-relaxed"
+              style={{ color: 'color-mix(in oklab, #FFFCF5 76%, transparent)' }}
+            >
+              {health === 'ok' ? c.subtitleOk : c.subtitleDown}
+            </p>
+          )}
+          {checkedAt && (
+            <p
+              className="mt-6 text-xs"
+              style={{ color: 'color-mix(in oklab, #FFFCF5 55%, transparent)' }}
+            >
+              {c.checkedAt} : {checkedAt.toLocaleTimeString(locale)}
+            </p>
+          )}
+        </div>
+
+        <div
+          aria-hidden
+          className="absolute inset-x-0 bottom-0 h-2 pattern-zellige"
+          style={{ background: 'color-mix(in oklab, var(--skin-hero-1) 70%, black)' }}
+        />
       </header>
 
-      <ul className="space-y-3">
-        {components.map((c) => (
-          <li
-            key={c.key}
-            className="flex items-center justify-between rounded-2xl border p-4"
-            style={{ borderColor: 'var(--skin-border)' }}
-          >
-            <div>
-              <p
-                className="text-sm font-semibold"
-                style={{ color: 'var(--skin-foreground)' }}
-              >
-                {c.label}
-              </p>
-              <p className="text-xs" style={{ color: 'var(--skin-muted)' }}>
-                {c.desc}
-              </p>
-            </div>
-            <StatusBadge status={c.status} />
-          </li>
-        ))}
-      </ul>
+      <section className="mx-auto max-w-4xl px-4 pt-16 sm:px-6 sm:pt-20 lg:px-8">
+        <ul className="space-y-4">
+          {SERVICE_KEYS.map((key: ServiceKey) => (
+            <li
+              key={key}
+              className="flex flex-wrap items-center justify-between gap-4 p-6 skin-card"
+            >
+              <div>
+                <p
+                  className="text-base font-semibold skin-font-heading"
+                  style={{ color: 'var(--skin-foreground)' }}
+                >
+                  {c.services[key].label}
+                </p>
+                <p className="mt-1 text-sm" style={{ color: 'var(--skin-muted)' }}>
+                  {c.services[key].desc}
+                </p>
+              </div>
+              <StatusBadge
+                status={health}
+                labels={{ ok: c.badgeOk, down: c.badgeDown, checking: c.badgeChecking }}
+              />
+            </li>
+          ))}
+        </ul>
 
-      <p className="mt-8 text-center text-xs" style={{ color: 'var(--skin-muted)' }}>
-        Cette page est mise a jour automatiquement chaque minute.
-      </p>
+        <p className="mt-8 text-center text-xs" style={{ color: 'var(--skin-muted)' }}>
+          {c.autoRefresh}
+        </p>
+      </section>
+
+      <section className="mx-auto max-w-4xl px-4 pt-20 sm:px-6 lg:px-8">
+        <h2
+          className="text-3xl font-light tracking-tight skin-font-heading sm:text-4xl"
+          style={{ color: 'var(--skin-foreground)' }}
+        >
+          {c.departuresTitle}
+        </h2>
+        <div className="mt-8 max-w-[16rem] rule-gold" />
+
+        <div className="mt-12 grid gap-6 sm:grid-cols-2">
+          {c.departures.map((departure) => (
+            <article
+              key={departure.route}
+              className="relative overflow-hidden p-7 skin-card"
+            >
+              <div
+                aria-hidden
+                className="absolute -top-10 end-[-2rem] h-40 w-32 arch pattern-girih motif-veil-strong"
+                style={{ background: 'var(--skin-primary)' }}
+              />
+              <div className="relative">
+                <h3
+                  className="text-lg font-semibold skin-font-heading"
+                  style={{ color: 'var(--skin-foreground)' }}
+                >
+                  {departure.route}
+                </h3>
+                <p
+                  className="mt-2 text-xs font-semibold uppercase tracking-[0.16em]"
+                  style={{ color: 'var(--gold)' }}
+                >
+                  {departure.days}
+                </p>
+                <div className="my-6 rule-gold" />
+                <p className="text-sm leading-relaxed" style={{ color: 'var(--skin-muted)' }}>
+                  {departure.note}
+                </p>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        <p className="mt-8 text-xs leading-relaxed" style={{ color: 'var(--skin-muted)' }}>
+          {c.departuresNote}
+        </p>
+      </section>
+
+      <section className="mx-auto max-w-4xl px-4 pt-20 sm:px-6 lg:px-8">
+        <div className="p-8 cartouche sm:p-10">
+          <h2
+            className="text-2xl font-light tracking-tight skin-font-heading"
+            style={{ color: 'var(--skin-foreground)' }}
+          >
+            {c.incidentTitle}
+          </h2>
+          <div className="my-6 rule-gold" />
+          <p className="text-sm leading-relaxed" style={{ color: 'var(--skin-muted)' }}>
+            {c.incidentBody}
+          </p>
+          <a
+            href={WHATSAPP_HREF}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-8 inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold skin-btn-primary"
+          >
+            <MessageCircle className="h-4 w-4" aria-hidden />
+            {c.incidentCta}
+          </a>
+        </div>
+      </section>
     </div>
   );
 }
 
-function StatusBadge({ status }: { status: Health }) {
+function StatusBadge({
+  status,
+  labels,
+}: {
+  status: Health;
+  labels: { ok: string; down: string; checking: string };
+}) {
+  const base =
+    'inline-flex items-center gap-2 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em]';
+
   if (status === 'checking') {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-700">
-        <Loader2 className="h-3 w-3 animate-spin" />
-        Verification
+      <span
+        className={base}
+        style={{
+          background: 'var(--gold-soft)',
+          color: 'var(--skin-foreground)',
+          borderRadius: 'var(--skin-radius-sm)',
+        }}
+      >
+        <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+        {labels.checking}
       </span>
     );
   }
+
   if (status === 'ok') {
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
-        <CheckCircle2 className="h-3 w-3" />
-        Operationnel
+      <span
+        className={base}
+        style={{
+          background: 'color-mix(in oklab, var(--skin-primary) 12%, transparent)',
+          color: 'var(--skin-primary)',
+          borderRadius: 'var(--skin-radius-sm)',
+          boxShadow: 'inset 0 0 0 1px color-mix(in oklab, var(--gold) 40%, transparent)',
+        }}
+      >
+        <CheckCircle2 className="h-3.5 w-3.5" aria-hidden />
+        {labels.ok}
       </span>
     );
   }
+
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-800">
-      <AlertCircle className="h-3 w-3" />
-      Incident
+    <span
+      className={base}
+      style={{
+        background: 'color-mix(in oklab, #8C2F2F 12%, transparent)',
+        color: '#8C2F2F',
+        borderRadius: 'var(--skin-radius-sm)',
+        boxShadow: 'inset 0 0 0 1px color-mix(in oklab, #8C2F2F 30%, transparent)',
+      }}
+    >
+      <AlertCircle className="h-3.5 w-3.5" aria-hidden />
+      {labels.down}
     </span>
   );
 }
